@@ -3,9 +3,9 @@ import pygame
 WIDTH, HEIGHT = 800, 800
 PADDING = 3
 ROWS, COLS = 8, 8
-SQUARE_SIZE = WIDTH//COLS 
+SQUARE_SIZE = WIDTH // COLS
 
 # rgb
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-GREEN = (0,255,0)
+GREEN = (0, 255, 0)
