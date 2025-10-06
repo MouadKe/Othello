@@ -1,6 +1,6 @@
-from game.constants import ROWS, COLS
-from status import square
-from status import status
+from View.constants import ROWS, COLS
+from .util import square
+from .util import status
 
 
 class Module:
@@ -88,9 +88,6 @@ class Module:
                             # Valid move: sandwiched opponent pieces
                             availablePlays.add(item)
                             break
-                        else:
-                            # No opponent pieces in between
-                            break
                     else:  # status.EMPTY
                         break
 
@@ -100,10 +97,48 @@ class Module:
 
         return availablePlays
 
+    def updateBoard(self, block: square):
 
-module = Module()
-print(module.board)
-for item in module.potentialPlays:
-    print(item.row, item.col, item.status)
+        change = []
 
-print(module.availablePlays(status.BLACK, status.WHITE))
+        directions = [
+            (-1, -1),
+            (-1, 0),
+            (-1, 1),
+            (0, -1),
+            (0, 1),
+            (1, -1),
+            (1, 0),
+            (1, 1),
+        ]
+
+        row, col = block.row, block.col
+
+        if block.status == status.BLACK:
+            Color = status.BLACK
+            opColor = status.WHITE
+        else:
+            Color = status.WHITE
+            opColor = status.BLACK
+
+        for dr, dc in directions:
+            r, c = row + dr, col + dc
+
+            potentialChange = []
+            isExtended = False
+            # Traverse in this direction
+            while 0 <= r < ROWS and 0 <= c < COLS:
+                if self.board[r][c] == opColor and not isExtended:
+                    potentialChange.append(square(r, c))
+                elif self.board[r][c] == Color:
+                    change.extend(potentialChange)
+                    isExtended = True
+                    break
+                else:  # status.EMPTY
+                    break
+
+                r += dr
+                c += dc
+
+        for item in change:
+            self.board[item.row][item.col] = Color
