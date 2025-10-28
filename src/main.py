@@ -1,25 +1,40 @@
 import pygame
 
-from Module.Module import Module
-from Module.util import status
+from Model.Model import Model
+from Model.util import status
 from View.board import OthelloBoard
+from View.constants import BLACK, WHITE
+from Controller.controller import controller
 
-module = Module()
-print(module.board)
-for item in module.potentialPlays:
-    print(item.row, item.col, item.status)
-availablePlays = module.availablePlays(status.BLACK, status.WHITE)
-print(availablePlays)
-
-item = availablePlays.pop()
-item.status = status.BLACK
-module.updateBoard(item)
-
-print(module.board)
-
+model = Model()
 Board = OthelloBoard()
-Board.run()
+control = controller(model, Board)
 
+control.initGame()
+
+running = True
+while running:
+    if control.turn == status.BLACK:
+        Color = status.BLACK
+        opColor = status.WHITE
+        color = BLACK
+    else:
+        Color = status.WHITE
+        opColor = status.BLACK
+        color = WHITE
+
+    availablePlays = model.availablePlays(Color, opColor, model.board)
+    Board.draw_available(availablePlays, color)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_x, mouse_y = event.pos
+            control.handle_moves(mouse_x, mouse_y)
+    pygame.display.update()
+    Board.clock.tick(60)
+
+pygame.quit()
 # # pygame setup
 # pygame.init()
 # screen = pygame.display.set_mode((WIDTH, HEIGHT))
